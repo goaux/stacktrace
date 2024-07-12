@@ -2,6 +2,7 @@
 Package stacktrace provides enhanced error handling capabilities with call stack dumps for Go applications.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/goaux/stacktrace.svg)](https://pkg.go.dev/github.com/goaux/stacktrace)
+[![Go Report Card](https://goreportcard.com/badge/github.com/goaux/stacktrace)](https://goreportcard.com/report/github.com/goaux/stacktrace)
 
 ## Features
 
