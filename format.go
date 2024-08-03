@@ -22,10 +22,12 @@ func Format(err error) string {
 	s := &strings.Builder{}
 	s.WriteString(err.Error())
 	for i, e := range list {
-		s.WriteString("\n  [")
-		s.WriteString(strconv.Itoa(i))
-		s.WriteString("]: ")
-		s.WriteString(e.Error())
+		if 0 < i || e.Error() != err.Error() {
+			s.WriteString("\n  [")
+			s.WriteString(strconv.Itoa(i))
+			s.WriteString("]: ")
+			s.WriteString(e.Error())
+		}
 		for _, frame := range Frames(e.Frames) {
 			s.WriteString("\n\t")
 			s.WriteString(frame)

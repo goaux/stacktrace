@@ -12,7 +12,7 @@ func Example() {
 	err := doSomethingRisky()
 	if err != nil {
 		fmt.Println("An error occurred:")
-		fmt.Println(stacktrace.Format(err))
+		fmt.Println("error: " + stacktrace.Format(err))
 
 		fmt.Println("\nJSON representation of the error:")
 		dumpJSON, _ := json.MarshalIndent(stacktrace.Dump(err), "", "  ")

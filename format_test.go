@@ -78,6 +78,19 @@ func TestFormat(t *testing.T) {
 
 		t.Log(stacktrace.Format(err))
 	})
+
+	t.Run("consice format", func(t *testing.T) {
+		err0 := stacktrace.New("err0")
+		assert.NotContains(t, stacktrace.Format(err0), "[0]:")
+
+		err1 := fmt.Errorf("err1: %w", err0)
+		assert.Contains(t, stacktrace.Format(err1), "[0]:")
+		assert.NotContains(t, stacktrace.Format(err1), "[1]:")
+
+		err2 := stacktrace.With(err1, stacktrace.Always)
+		assert.Contains(t, stacktrace.Format(err2), "[0]:")
+		assert.Contains(t, stacktrace.Format(err2), "[1]:")
+	})
 }
 
 func hello(options ...stacktrace.Option) error {
