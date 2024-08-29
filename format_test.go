@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/goaux/stacktrace"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestFormat(t *testing.T) {
@@ -71,10 +70,10 @@ func TestFormat(t *testing.T) {
 		dump := stacktrace.Dump(err)
 		assert.Len(t, dump.Traces, 4)
 
-		assert.Contains(t, dump.Traces[0].StackEntries[0], "format_test.go:65")
-		assert.Contains(t, dump.Traces[1].StackEntries[0], "format_test.go:66")
-		assert.Contains(t, dump.Traces[2].StackEntries[0], "format_test.go:67")
-		assert.Contains(t, dump.Traces[3].StackEntries[0], "format_test.go:68")
+		assert.Contains(t, dump.Traces[0].StackEntries[0], "format_test.go:64")
+		assert.Contains(t, dump.Traces[1].StackEntries[0], "format_test.go:65")
+		assert.Contains(t, dump.Traces[2].StackEntries[0], "format_test.go:66")
+		assert.Contains(t, dump.Traces[3].StackEntries[0], "format_test.go:67")
 
 		t.Log(stacktrace.Format(err))
 	})

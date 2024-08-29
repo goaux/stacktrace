@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/goaux/stacktrace"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestError(t *testing.T) {
