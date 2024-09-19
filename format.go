@@ -55,7 +55,13 @@ func Frames(frames []uintptr) []string {
 }
 
 func funcname(name string) string {
-	if i := strings.LastIndexByte(name, '.'); i >= 0 {
+	if i := strings.LastIndexByte(name, '/'); i >= 0 {
+		if j := strings.IndexByte(name[i+1:], '.'); j >= 0 {
+			return name[i+j+2:]
+		}
+		return name[i+1:]
+	}
+	if i := strings.IndexByte(name, '.'); i >= 0 {
 		return name[i+1:]
 	}
 	return name
