@@ -18,7 +18,12 @@ type DebugInfo struct {
 // GetDebugInfo extracts debug information from an error.
 // It collects stack trace frames and formats them as strings, then returns
 // this information along with the detailed error message in a [DebugInfo] struct.
+//
+// It returns a zero value if err is nil.
 func GetDebugInfo(err error) DebugInfo {
+	if err == nil {
+		return DebugInfo{}
+	}
 	var frames []string
 	if err := extract(err); err != nil {
 		frames = make([]string, 0, len(err.Callers))
