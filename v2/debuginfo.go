@@ -25,15 +25,18 @@ func GetDebugInfo(err error) DebugInfo {
 	if err == nil {
 		return DebugInfo{}
 	}
-	var frames []string
+	return DebugInfo{StackEntries: stackEntries(err), Detail: err.Error()}
+}
+
+func stackEntries(err error) []string {
 	if err := extract(err); err != nil {
-		frames = make([]string, 0, len(err.Callers))
+		entries := make([]string, 0, len(err.Callers))
 		walkCallersFrames(err.Callers, func(frame *runtime.Frame) {
-			frames = append(frames, frameString(frame))
+			entries = append(entries, frameString(frame))
 		})
+		return entries
 	}
-	detail := err.Error()
-	return DebugInfo{Detail: detail, StackEntries: frames}
+	return nil
 }
 
 // Format returns a formatted string representation of the DebugInfo.
