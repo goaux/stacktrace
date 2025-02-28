@@ -2,6 +2,7 @@ package stacktrace
 
 import (
 	"runtime"
+	"strings"
 )
 
 // DebugInfo represents debug information about an error.
@@ -33,4 +34,19 @@ func GetDebugInfo(err error) DebugInfo {
 	}
 	detail := err.Error()
 	return DebugInfo{Detail: detail, StackEntries: frames}
+}
+
+// Format returns a formatted string representation of the DebugInfo.
+//
+// The output consists of the Detail message followed by the stack trace entries,
+// each separated by a newline and a tab ("\n\t").
+func (info DebugInfo) Format() string {
+	n := len(info.StackEntries)
+	if n == 0 {
+		return info.Detail
+	}
+	return strings.Join(
+		append(append(make([]string, 0, 1+n), info.Detail), info.StackEntries...),
+		"\n\t",
+	)
 }

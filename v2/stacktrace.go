@@ -11,6 +11,7 @@ package stacktrace
 import (
 	"errors"
 	"fmt"
+	"runtime"
 )
 
 // New returns an error created with errors.New along with stack trace information in a concise way.
@@ -42,4 +43,18 @@ func New(text string) error {
 // stacktrace.Errorf is slightly more concise and efficient.
 func Errorf(format string, a ...any) error {
 	return withSkip(fmt.Errorf(format, a...), 1)
+}
+
+// Format returns a formatted string representation of the [DebugInfo] from err.
+//
+// If err is nil, it returns an empty string.
+// If err's chain doesn't contain any stack trace information, it returns err.Error().
+//
+// This is equivalent to:
+//
+//	stacktrace.GetDebugInfo(err).Format()
+//
+// See [DebugInfo.Format].
+func Format(err error) string {
+	return GetDebugInfo(err).Format()
 }

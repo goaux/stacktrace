@@ -38,3 +38,51 @@ func TestGetDebugInfo(t *testing.T) {
 		}
 	})
 }
+
+func TestDebugInfo_Format(t *testing.T) {
+	tests := []struct {
+		name string
+		info stacktrace.DebugInfo
+		want string
+	}{
+		{
+			name: "full",
+			info: stacktrace.DebugInfo{StackEntries: []string{"1", "2"}, Detail: "detail"},
+			want: "detail\n\t1\n\t2",
+		},
+		{
+			name: "stackentries",
+			info: stacktrace.DebugInfo{StackEntries: []string{"1", "2"}},
+			want: "\n\t1\n\t2",
+		},
+		{
+			name: "detail",
+			info: stacktrace.DebugInfo{Detail: "detail"},
+			want: "detail",
+		},
+		{
+			name: "zero",
+			info: stacktrace.DebugInfo{},
+			want: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.info.Format()
+			if got != tt.want {
+				t.Errorf("got=%s want=%s", got, tt.want)
+			}
+		})
+	}
+}
+
+func ExampleDebugInfo_Format() {
+	err := stacktrace.Trace(os.Chdir("/no/such/dir"))
+	fmt.Println(stacktrace.Format(err))
+}
+
+func ExampleDebugInfo_Format_nil() {
+	err := stacktrace.Trace(nil)
+	fmt.Println(stacktrace.Format(err))
+	// Output:
+}

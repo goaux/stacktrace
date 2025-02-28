@@ -31,6 +31,16 @@ err := stacktrace.Errorf("some error: %w", originalErr)
 
 ## Extracting Call Stack Information
 
+To get a formatted string representation of call stack information from an error:
+
+```go
+// Get as a string.
+// This is equivalent to the result of calling `err.Error()`
+// if err doesn't conatin call stack information.
+// s is an empty string if err is nil.
+s := stacktrace.Format(err)
+```
+
 To extract call stack information from an error:
 
 ```go
