@@ -38,23 +38,7 @@ func extract(err error) *Error {
 }
 
 func newErrorSkip(err error, skip int) error {
-	return NewError(err, callers(skip+1))
-}
-
-func callers(skip int) []uintptr {
-	skip += 2
-	const size = 8
-	var pc []uintptr
-	for {
-		x := make([]uintptr, size)
-		n := runtime.Callers(skip, x)
-		if n == 0 {
-			break
-		}
-		pc = append(pc, x[:n]...)
-		skip += n
-	}
-	return pc
+	return NewError(err, Callers(skip+1))
 }
 
 // Error returns a string representation of the custom error, including
