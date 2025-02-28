@@ -11,6 +11,7 @@ package stacktrace
 import (
 	"errors"
 	"fmt"
+	"runtime"
 )
 
 // New returns an error created with errors.New along with stack trace information in a concise way.
@@ -42,4 +43,42 @@ func New(text string) error {
 // stacktrace.Errorf is slightly more concise and efficient.
 func Errorf(format string, a ...any) error {
 	return withSkip(fmt.Errorf(format, a...), 1)
+}
+
+// Format returns a formatted string representation of the [DebugInfo] from err.
+//
+// If err is nil, it returns an empty string.
+// If err's chain doesn't contain any stack trace information, it returns err.Error().
+//
+// This is equivalent to:
+//
+//	stacktrace.GetDebugInfo(err).Format()
+//
+// See [DebugInfo.Format].
+func Format(err error) string {
+	return GetDebugInfo(err).Format()
+}
+
+// Callers returns the program counters (PCs) of function invocations on the
+// calling goroutine's stack, skipping the specified number of stack frames.
+//
+// The skip parameter determines how many initial stack frames to omit from the
+// result. A skip value of 0 starts from the caller of Callers itself.
+//
+// The returned slice contains the collected program counters, which can be
+// further processed using runtime.CallersFrames to obtain function details.
+func Callers(skip int) []uintptr {
+	skip += 2
+	const size = 8
+	var pc []uintptr
+	for {
+		x := make([]uintptr, size)
+		n := runtime.Callers(skip, x)
+		if n == 0 {
+			break
+		}
+		pc = append(pc, x[:n]...)
+		skip += n
+	}
+	return pc
 }
