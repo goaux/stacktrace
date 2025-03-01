@@ -15,8 +15,8 @@ The most basic way to create an error with a stack trace is to use the `Trace` f
 err := stacktrace.Trace(os.Chdir(target))
 ```
 
-There are overlods of `Trace` that return the original values along with the error.
-They are `Trace1`, `Trace2` and `Trace3`.
+There are overloads of `Trace` that return the original values along with the error.
+These are `Trace1`, `Trace2`, and `Trace3`:
 
 ```go
 file, err := stacktrace.Trace1(os.Open(file))
@@ -35,23 +35,23 @@ To get a formatted string representation of call stack information from an error
 
 ```go
 // Get as a string.
-// This is equivalent to the result of calling `err.Error()`
-// if err doesn't conatin call stack information.
-// s is an empty string if err is nil.
+// This is equivalent to calling `err.Error()`
+// if `err` does not contain call stack information.
+// `s` is an empty string if `err` is nil.
 s := stacktrace.Format(err)
 ```
 
 To extract call stack information from an error:
 
 ```go
-// Get as a DebugInfo
+// Get as a DebugInfo instance
 info := stacktrace.GetDebugInfo(err)
 ```
 
-Or you can use `errors.As` to extract the Error instance from an error chain.
+Alternatively, you can use `errors.As` to extract the `Error` instance from an error chain.
 
 ## Performance Considerations
 
 Adding stack traces to errors involves some overhead. In performance-critical
-sections, consider using traditional error handling and add stack traces at
+sections, consider using traditional error handling and adding stack traces at
 higher levels of your application.

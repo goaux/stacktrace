@@ -8,20 +8,31 @@ import (
 	"strings"
 )
 
-// Error is a custom error type that captures the original error along with
-// call stack information where the error was created.
+// Error wraps an error and adds a call stack indicating where it occurred.
 //
-// The following functions can be used to create and manipulate errors:
+// It is recommended to use the following functions to create an instance of Error:
 //
-//   - [New]: Creates a new error instance without caller frames.
-//   - [Errorf]: Creates an error using a format string, similar to `fmt.Errorf`.
-//   - [Trace]: Wraps an existing error with call stack information.
-//   - [Trace1], [Trace2], [Trace3]: Overloads of Trace that return the original values along with the traced error.
+//   - [Trace]: Adds a call stack indicating where [Trace] was executed to the given error and returns it.
+//   - [Trace1], [Trace2], [Trace3]: Variants of [Trace] that accept multiple
+//     arbitrary arguments along with an error and return them.
+//     The trailing number represents the number of additional arguments other than the error.
+//   - [Errorf]: A function that wraps `fmt.Errorf` with `Trace`.
+//   - [New]: A function that wraps `errors.New` with `Trace`.
+//
+// If `nil` is passed to [Trace] and its variants, they return `nil` as an error.
+//
+// [Trace], [Trace1], [Trace2], [Trace3], and [Errorf] do not add a new call
+// stack if the given error already has one, meaning that if an `Error`
+// instance is already present in the error chain, the original error is
+// returned as-is.
+//
+// [New] always returns an error with a newly added call stack.
 type Error struct {
-	// Err is the underlying error value.
+	// Err holds the original error that occurred.
 	Err error
 
-	// Callers contains a list of stack frames at the time the error was created.
+	// Callers contains the program counters (PCs) of the function call stack
+	// at the time the error was captured. These can be used to retrieve stack traces.
 	Callers []uintptr
 }
 
