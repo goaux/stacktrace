@@ -8,6 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"runtime"
+
+	v2 "github.com/goaux/stacktrace/v2"
 )
 
 // Error represents an error with an associated cause and stack frames.
@@ -109,8 +111,11 @@ func Extract(err error) []*Error {
 }
 
 func extract(list []*Error, err error) []*Error {
-	if v, ok := err.(*Error); ok {
+	switch v := err.(type) {
+	case *Error:
 		list = append(list, v)
+	case *v2.Error:
+		list = append(list, &Error{Cause: v.Err, Frames: v.Callers})
 	}
 	switch v := err.(type) {
 	case interface{ Unwrap() []error }:
