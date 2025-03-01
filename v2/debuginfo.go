@@ -9,11 +9,11 @@ import (
 //
 // This struct is compatible with [google.golang.org/genproto/googleapis/rpc/errdetails.DebugInfo].
 type DebugInfo struct {
-	// StackEntries contains a list of stack trace entries related to the error.
-	StackEntries []string `json:"stack_entries,omitempty"`
-
 	// Detail provides a detailed error message.
 	Detail string `json:"detail,omitempty"`
+
+	// StackEntries contains a list of stack trace entries related to the error.
+	StackEntries []string `json:"stack_entries,omitempty"`
 }
 
 // GetDebugInfo extracts debug information from an error.

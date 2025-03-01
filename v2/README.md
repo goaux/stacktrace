@@ -74,11 +74,11 @@ For example, the info contains information like below:
 
 ```
 {
+  "detail": "chdir /no/such/dir: no such file or directory (run.go:10 main.run)",
   "stack_entries": [
     "example.com/hello/run.go:10 main.run",
     "example.com/hello/main.go:11 main.main"
-  ],
-  "detail": "chdir /no/such/dir: no such file or directory (run.go:10 main.run)"
+  ]
 }
 ```
 
