@@ -1,15 +1,15 @@
 # stacktrace/v2
 
-Package stacktrace provides utilities for capturing and inspecting call stacks associated with errors.
+Package stacktrace provides utilities for capturing and inspecting stack traces associated with errors.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/goaux/stacktrace/v2.svg)](https://pkg.go.dev/github.com/goaux/stacktrace/v2)
 [![Go Report Card](https://goreportcard.com/badge/github.com/goaux/stacktrace/v2)](https://goreportcard.com/report/github.com/goaux/stacktrace/v2)
 
 ## Features
 
-- Wraps errors with a single call stack
-  - Typically, a single error chain contains at most one call stack
-- Extracts the call stack from an error
+- Wraps errors with a single stack trace
+  - Typically, a single error chain contains at most one stack trace
+- Extracts the stack trace from an error
 
 ## Usage
 
@@ -21,8 +21,9 @@ The most basic way to create an error with a stack trace is to use the `Trace` f
 err := stacktrace.Trace(os.Chdir(target))
 ```
 
-There are overloads of `Trace` that return the original values along with the error.
-These are `Trace2`, `Trace3`, and `Trace4`:
+There are `Trace2`, `Trace3`, and `Trace4`:
+These are overloads of `Trace` that return the given values unchanged if err is nil.
+If err is not nil, it wraps err with stack trace information before returning.
 
 ```go
 file, err := stacktrace.Trace2(os.Open(file))
@@ -37,16 +38,16 @@ err := stacktrace.New("some error")
 err := stacktrace.Errorf("some error: %w", originalErr)
 ```
 
-## Extracting Call Stack Information
+## Extracting Stack Trace Information
 
 ### As a string
 
-To get a formatted string representation of call stack information from an error:
+To get a formatted string representation of stack trace information from an error:
 
 ```go
 // Get as a string.
 // This is equivalent to calling `err.Error()`
-// if `err` does not contain call stack information.
+// if `err` does not contain stack trace information.
 // `s` is an empty string if `err` is nil.
 s := stacktrace.Format(err)
 ```
@@ -61,7 +62,7 @@ chdir /no/such/dir: no such file or directory (run.go:10 main.run)
 
 ### As a DebugInfo
 
-To extract call stack information from an error:
+To extract stack trace information from an error:
 
 ```go
 // Get as a DebugInfo instance
