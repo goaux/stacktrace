@@ -15,15 +15,20 @@ Package stacktrace provides utilities for capturing and inspecting stack traces 
 
 ### Trace
 
-The most basic way to create an error with a stack trace is to use the `Trace` function:
+The most basic way to create an error with a stack trace is to use the [Trace][] function:
 
 ```go
 err := stacktrace.Trace(os.Chdir(target))
 ```
 
-There are `Trace2`, `Trace3`, and `Trace4`:
-These are overloads of `Trace` that return the given values unchanged if err is nil.
+There are [Trace2][], [Trace3][], and [Trace4][]:
+These are overloads of [Trace][] that return the given values unchanged if err is nil.
 If err is not nil, it wraps err with stack trace information before returning.
+
+[Trace]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Trace
+[Trace2]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Trace2
+[Trace3]: https://pkg.go.dev/github.com/goaux/stacktrace/v3#Trace3
+[Trace4]: https://pkg.go.dev/github.com/goaux/stacktrace/v4#Trace4
 
 ```go
 file, err := stacktrace.Trace2(os.Open(file))
@@ -31,12 +36,17 @@ file, err := stacktrace.Trace2(os.Open(file))
 
 ### New and Errorf
 
-For convenience, you can use `New` and `Errorf` as drop-in replacements for `errors.New` and `fmt.Errorf`:
+For convenience, you can use [New][] and [Errorf][] as drop-in replacements for [errors.New][] and [fmt.Errorf][]:
 
 ```go
 err := stacktrace.New("some error")
 err := stacktrace.Errorf("some error: %w", originalErr)
 ```
+
+[New]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#New
+[Errorf]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Errorf
+[errors.New]: https://pkg.go.dev/errors#New
+[fmt.Errorf]: https://pkg.go.dev/fmt#Errorf
 
 ## Extracting Stack Trace Information
 
@@ -52,13 +62,16 @@ To get a formatted string representation of stack trace information from an erro
 s := stacktrace.Format(err)
 ```
 
+Use [Format][].
 For example, the `s` contains multiline string like below:
 
-```
+```text
 chdir /no/such/dir: no such file or directory (run.go:10 main.run)
         example.com/hello/run.go:10 main.run
         example.com/hello/main.go:11 main.main
 ```
+
+[Format]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Format
 
 ### As a DebugInfo
 
@@ -73,7 +86,7 @@ The [DebugInfo](https://pkg.go.dev/github.com/goaux/stacktrace/v2#DebugInfo) typ
 
 For example, the info contains information like below:
 
-```
+```json
 {
   "detail": "chdir /no/such/dir: no such file or directory (run.go:10 main.run)",
   "stack_entries": [
@@ -85,7 +98,21 @@ For example, the info contains information like below:
 
 ### Other ways
 
-Alternatively, you can use `errors.As` to extract the `Error` instance from an error chain.
+Alternatively, you can use [errors.As][] to extract the [Error][] instance from an error chain.
+[CallersFrames][] is available in Go 1.23 or later.
+
+[errors.As]: https://pkg.go.dev/errors#As
+[Error]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Error
+[CallersFrames]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#CallersFrames
+
+```go
+var info *stacktrace.Error
+if errors.As(err, &info) {
+	for frame := range stacktrace.CallersFrames(info.Callers) {
+		_, _ = frame.File, frame.Line
+	}
+}
+```
 
 ## Performance Considerations
 
