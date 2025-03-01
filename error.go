@@ -16,6 +16,17 @@ type Error struct {
 	Frames []uintptr
 }
 
+var _ StackTracer = Error{}
+
+// StackTracer represents an error that provides stack trace information.
+type StackTracer interface {
+	// StackTracer extends the error interface.
+	error
+
+	// StackTrace returns a slice of program counters representing the call stack.
+	StackTrace() []uintptr
+}
+
 // Error returns the error message of the underlying cause.
 //
 // It implements the error interface.
@@ -28,6 +39,11 @@ func (err Error) Error() string {
 // It allows Error to work with errors.Unwrap.
 func (err Error) Unwrap() error {
 	return err.Cause
+}
+
+// StackTrace returns a slice of program counters representing the call stack.
+func (err Error) StackTrace() []uintptr {
+	return err.Frames
 }
 
 // With wraps the given cause error with stack trace information.

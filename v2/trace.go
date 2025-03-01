@@ -1,5 +1,7 @@
 package stacktrace
 
+import "errors"
+
 // Trace returns the error along with stack frame information.
 // It returns nil if the input error is nil.
 func Trace(err error) error {
@@ -45,4 +47,10 @@ func withSkip(err error, skip int) error {
 		return err
 	}
 	return newErrorSkip(err, skip+1)
+}
+
+func extract(err error) *Error {
+	var target *Error
+	errors.As(err, &target)
+	return target
 }
