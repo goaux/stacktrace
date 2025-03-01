@@ -13,7 +13,7 @@ import (
 // It is recommended to use the following functions to create an instance of Error:
 //
 //   - [Trace]: Adds a call stack indicating where [Trace] was executed to the given error and returns it.
-//   - [Trace1], [Trace2], [Trace3]: Variants of [Trace] that accept multiple
+//   - [Trace2], [Trace3], [Trace4]: Variants of [Trace] that accept multiple
 //     arbitrary arguments along with an error and return them.
 //     The trailing number represents the number of additional arguments other than the error.
 //   - [Errorf]: A function that wraps `fmt.Errorf` with `Trace`.
@@ -21,7 +21,7 @@ import (
 //
 // If `nil` is passed to [Trace] and its variants, they return `nil` as an error.
 //
-// [Trace], [Trace1], [Trace2], [Trace3], and [Errorf] do not add a new call
+// [Trace], [Trace2], [Trace3], [Trace4], and [Errorf] do not add a new call
 // stack if the given error already has one, meaning that if an `Error`
 // instance is already present in the error chain, the original error is
 // returned as-is.

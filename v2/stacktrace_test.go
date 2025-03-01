@@ -16,7 +16,7 @@ func Example() {
 		fmt.Printf("%d stack entries included.", len(info.StackEntries))
 		panic(stacktrace.GetDebugInfo(err))
 	}
-	if file, err := stacktrace.Trace1(os.Open("./no/such/file")); err != nil {
+	if file, err := stacktrace.Trace2(os.Open("./no/such/file")); err != nil {
 		fmt.Println("err.Error():", err.Error())
 		info := stacktrace.GetDebugInfo(err)
 		fmt.Println("info.Detail:", info.Detail)

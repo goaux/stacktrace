@@ -19,10 +19,10 @@ err := stacktrace.Trace(os.Chdir(target))
 ```
 
 There are overloads of `Trace` that return the original values along with the error.
-These are `Trace1`, `Trace2`, and `Trace3`:
+These are `Trace2`, `Trace3`, and `Trace4`:
 
 ```go
-file, err := stacktrace.Trace1(os.Open(file))
+file, err := stacktrace.Trace2(os.Open(file))
 ```
 
 For convenience, you can use `New` and `Errorf` as drop-in replacements for `errors.New` and `fmt.Errorf`:
