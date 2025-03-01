@@ -23,7 +23,7 @@ func TestDebugInfo_slog(t *testing.T) {
 		txt := buf.String()
 		i := strings.Index(txt, ` err="{`)
 		got := txt[i:]
-		want := ` err="{StackEntries:[entry#1 entry#2] Detail:debuginfo-detail}"` + "\n"
+		want := ` err="{Detail:debuginfo-detail StackEntries:[entry#1 entry#2]}"` + "\n"
 		if got != want {
 			t.Errorf("got=%q want=%q", got, want)
 		}
@@ -35,7 +35,7 @@ func TestDebugInfo_slog(t *testing.T) {
 		txt := buf.String()
 		i := strings.Index(txt, `"err":{`)
 		got := txt[i:]
-		want := `"err":{"stack_entries":["entry#1","entry#2"],"detail":"debuginfo-detail"}}` + "\n"
+		want := `"err":{"detail":"debuginfo-detail","stack_entries":["entry#1","entry#2"]}}` + "\n"
 		if got != want {
 			t.Errorf("got=%q want=%q", got, want)
 		}
