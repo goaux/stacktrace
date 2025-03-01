@@ -54,12 +54,9 @@ s := stacktrace.Format(err)
 For example, the `s` contains multiline string like below:
 
 ```
-chdir /no/such/dir: no such file or directory (debuginfo_test.go:80 ExampleDebugInfo_Format)
-        github.com/goaux/stacktrace/v2/debuginfo_test.go:80 ExampleDebugInfo_Format
-        testing/run_example.go:63 testing.runExample
-        testing/example.go:41 testing.runExamples
-        testing/testing.go:2144 testing.(*M).Run
-        _testmain.go:73 main.main
+chdir /no/such/dir: no such file or directory (run.go:10 main.run)
+        example.com/hello/run.go:10 main.run
+        example.com/hello/main.go:11 main.main
 ```
 
 ### As a DebugInfo
@@ -78,13 +75,10 @@ For example, the info contains information like below:
 ```
 {
   "stack_entries": [
-    "github.com/goaux/stacktrace/v2/debuginfo_test.go:81 ExampleDebugInfo_Format",
-    "testing/run_example.go:63 testing.runExample",
-    "testing/example.go:41 testing.runExamples",
-    "testing/testing.go:2144 testing.(*M).Run",
-    "_testmain.go:73 main.main"
+    "example.com/hello/run.go:10 main.run",
+    "example.com/hello/main.go:11 main.main"
   ],
-  "detail": "chdir /no/such/dir: no such file or directory (debuginfo_test.go:81 ExampleDebugInfo_Format)"
+  "detail": "chdir /no/such/dir: no such file or directory (run.go:10 main.run)"
 }
 ```
 
