@@ -2,6 +2,9 @@
 
 Package stacktrace provides utilities for capturing and inspecting call stacks associated with errors.
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/goaux/stacktrace/v2.svg)](https://pkg.go.dev/github.com/goaux/stacktrace/v2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/goaux/stacktrace/v2)](https://goreportcard.com/report/github.com/goaux/stacktrace/v2)
+
 ## Features
 
 - Wraps errors with a single call stack
