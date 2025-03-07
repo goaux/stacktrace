@@ -87,3 +87,22 @@ func (asserter) True(t *testing.T, value bool) bool {
 	}
 	return value
 }
+
+func (asserter) Nil(t *testing.T, value any) {
+	t.Helper()
+	if value != nil {
+		t.Errorf("Error: should be nil; got=%v", value)
+	}
+}
+
+func TestDump(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		info := stacktrace.Dump(nil)
+		got := fmt.Sprintf("%#v", info)
+		want := `stacktrace.StackDump{Error:"", Traces:[]stacktrace.StackTrace(nil)}`
+		if got != want {
+			t.Errorf("got=%v want=%v", got, want)
+		}
+	})
+
+}

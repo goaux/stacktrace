@@ -90,6 +90,17 @@ func TestFormat(t *testing.T) {
 		assert.Contains(t, stacktrace.Format(err2), "[0]:")
 		assert.Contains(t, stacktrace.Format(err2), "[1]:")
 	})
+
+	t.Run("nil", func(t *testing.T) {
+		got := stacktrace.Format(nil)
+		assert.Equal(t, "", got)
+	})
+
+	t.Run("no-frames", func(t *testing.T) {
+		err := fmt.Errorf("testing")
+		got := stacktrace.Format(err)
+		assert.Equal(t, err.Error(), got)
+	})
 }
 
 func hello(options ...stacktrace.Option) error {
