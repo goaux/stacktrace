@@ -1,7 +1,6 @@
 package stacktrace
 
 import (
-	"errors"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -36,16 +35,21 @@ type Error struct {
 	Callers []uintptr
 }
 
+var _ StackTracer = Error{}
+
+// StackTracer represents an error that provides stack trace information.
+type StackTracer interface {
+	// StackTracer extends the error interface.
+	error
+
+	// StackTrace returns a slice of program counters representing the call stack.
+	StackTrace() []uintptr
+}
+
 // NewError returns a new Error instance with the given error and caller stack
 // information.
 func NewError(err error, callers []uintptr) *Error {
 	return &Error{Err: err, Callers: callers}
-}
-
-func extract(err error) *Error {
-	var target *Error
-	errors.As(err, &target)
-	return target
 }
 
 func newErrorSkip(err error, skip int) error {
@@ -75,6 +79,11 @@ func (err Error) Error() string {
 // errors.Unwrap.
 func (err Error) Unwrap() error {
 	return err.Err
+}
+
+// StackTrace returns a slice of program counters representing the call stack.
+func (err Error) StackTrace() []uintptr {
+	return err.Callers
 }
 
 func walkCallersFrames(pc []uintptr, fn func(*runtime.Frame)) {
