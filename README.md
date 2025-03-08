@@ -1,116 +1,124 @@
-# stacktrace
-Package stacktrace provides enhanced error handling capabilities with call stack dumps for Go applications.
+# stacktrace/v2
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/goaux/stacktrace.svg)](https://pkg.go.dev/github.com/goaux/stacktrace)
-[![Go Report Card](https://goreportcard.com/badge/github.com/goaux/stacktrace)](https://goreportcard.com/report/github.com/goaux/stacktrace)
+> **Note:** This is the documentation for **v2** of the `stacktrace` module.  
+> For **v1** documentation, see [README.v1.md](./README.v1.md).  
+
+Package stacktrace provides utilities for capturing and inspecting stack traces associated with errors.
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/goaux/stacktrace/v2.svg)](https://pkg.go.dev/github.com/goaux/stacktrace/v2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/goaux/stacktrace/v2)](https://goreportcard.com/report/github.com/goaux/stacktrace/v2)
 
 ## Features
 
-- Wrap errors with call stack information
-- Extract and format stack traces from errors
-- Support for error chains
-- JSON-serializable error representations
-- Customizable stack trace depth and skip frames
+- Wraps errors with a single stack trace
+  - Typically, a single error chain contains at most one stack trace
+- Extracts the stack trace from an error
 
 ## Usage
 
-### Creating Errors with Stack Traces
+### Trace
 
-The most basic way to create an error with a stack trace is to use the `With` function:
+The most basic way to create an error with a stack trace is to use the [Trace][] function:
 
-    err := stacktrace.With(errors.New("some error"))
+```go
+err := stacktrace.Trace(os.Chdir(target))
+```
 
-For convenience, you can use `New` and `Errorf` as drop-in replacements for `errors.New` and `fmt.Errorf`:
+There are [Trace2][], [Trace3][], and [Trace4][]:
+These are overloads of [Trace][] that return the given values unchanged if err is nil.
+If err is not nil, it wraps err with stack trace information before returning.
 
-    err := stacktrace.New("some error")
-    err := stacktrace.Errorf("some error: %w", originalErr)
+[Trace]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Trace
+[Trace2]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Trace2
+[Trace3]: https://pkg.go.dev/github.com/goaux/stacktrace/v3#Trace3
+[Trace4]: https://pkg.go.dev/github.com/goaux/stacktrace/v4#Trace4
 
-### Extracting Stack Traces
+```go
+file, err := stacktrace.Trace2(os.Open(file))
+```
+
+### New and Errorf
+
+For convenience, you can use [New][] and [Errorf][] as drop-in replacements for [errors.New][] and [fmt.Errorf][]:
+
+```go
+err := stacktrace.New("some error")
+err := stacktrace.Errorf("some error: %w", originalErr)
+```
+
+[New]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#New
+[Errorf]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Errorf
+[errors.New]: https://pkg.go.dev/errors#New
+[fmt.Errorf]: https://pkg.go.dev/fmt#Errorf
+
+## Extracting Stack Trace Information
+
+### As a string
+
+To get a formatted string representation of stack trace information from an error:
+
+```go
+// Get as a string.
+// This is equivalent to calling `err.Error()`
+// if `err` does not contain stack trace information.
+// `s` is an empty string if `err` is nil.
+s := stacktrace.Format(err)
+```
+
+Use [Format][].
+For example, the `s` contains multiline string like below:
+
+```text
+chdir /no/such/dir: no such file or directory (run.go:10 main.run)
+        example.com/hello/run.go:10 main.run
+        example.com/hello/main.go:11 main.main
+```
+
+[Format]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Format
+
+### As a DebugInfo
 
 To extract stack trace information from an error:
 
-    // Get as a formatted string
-    formattedError := stacktrace.Format(err)
+```go
+// Get as a DebugInfo instance
+info := stacktrace.GetDebugInfo(err)
+```
 
-    // Get as a structured StackDump
-    dumpedError := stacktrace.Dump(err)
+The [DebugInfo](https://pkg.go.dev/github.com/goaux/stacktrace/v2#DebugInfo) type is compatible with [google.golang.org/genproto/googleapis/rpc/errdetails.DebugInfo](https://pkg.go.dev/google.golang.org/genproto/googleapis/rpc/errdetails#DebugInfo).
 
-    // Get as a slice of *Error
-    errorSlice := stacktrace.Extract(err)
+For example, the info contains information like below:
 
-### Working with Error Chains
+```json
+{
+  "detail": "chdir /no/such/dir: no such file or directory (run.go:10 main.run)",
+  "stack_entries": [
+    "example.com/hello/run.go:10 main.run",
+    "example.com/hello/main.go:11 main.main"
+  ]
+}
+```
 
-By default, `With` only adds a stack trace to the first error in the chain:
+### Other ways
 
-    err1 := stacktrace.With(errors.New("first error"))
-    err2 := stacktrace.With(err1) // err2 is the same as err1
+Alternatively, you can use [errors.As][] to extract the [Error][] instance from an error chain.
+[CallersFrames][] is available in Go 1.23 or later.
 
-To force adding multiple stack traces in an error chain, use the `Always` option:
+[errors.As]: https://pkg.go.dev/errors#As
+[Error]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Error
+[CallersFrames]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#CallersFrames
 
-    err1 := stacktrace.With(errors.New("first error"))
-    err2 := stacktrace.With(err1, stacktrace.Always) // err2 has two stack traces
-
-For `Errorf` with `Always`:
-
-    err2 := stacktrace.Always.Errorf("second error: %w", err1)
-
-### Customizing Stack Traces
-
-You can customize the depth of the stack trace and skip frames:
-
-    err := stacktrace.With(originalErr, stacktrace.Limit(10), stacktrace.Skip(1))
-
-## Advanced Usage
-
-### JSON Serialization
-
-The `StackDump` struct returned by `Dump` is JSON-serializable:
-
-    dump := stacktrace.Dump(err)
-    jsonData, _ := json.Marshal(dump)
-
-### Integration with Logging
-
-You can easily integrate stacktrace with your logging system:
-
-    if err != nil {
-        log.Printf("Error occurred: %s", stacktrace.Format(err))
-    }
-
-### About Multiple Call Stack Dumps
-
-Errors are returned from deep in the call stack towards the shallow direction.
-Call stack dumps obtained from deep locations also include information from
-shallower locations. Therefore, normally, having just one call stack dump in
-the error chain contains the necessary information.
-
-By default, `With` only adds a stack trace to the first error in the chain:
-
-    err0 := errors.New("error message")
-    err1 := stacktrace.With(err0) // err1 is an instance of *Error
-    err2 := stacktrace.With(err1) // Since err1 already has a stack dump set, it returns err1
-
-However, in cases where an error occurring in one goroutine is passed to
-another goroutine to propagate the error, you might want to set multiple call
-stack dumps in the error chain. For this purpose, use the `stacktrace.Always`
-option:
-
-    err0 := errors.New("error message")
-    err1 := stacktrace.With(err0) // err1 is an instance of *Error
-    err3 := stacktrace.With(err1, stacktrace.Always) // err3 has two call stack dumps
-
-    // For Errorf with Always
-    err4 := stacktrace.Always.Errorf("work error %w", err3) // err4 has three call stack dumps
-
-## Best Practices
-
-1. Use `stacktrace.New` and `stacktrace.Errorf` at the point where errors originate.
-2. Use `stacktrace.With` when wrapping errors from external packages.
-3. Use `stacktrace.Always` when you need to track error propagation across goroutines.
-4. Always check if an error is nil before using stacktrace functions.
+```go
+var info *stacktrace.Error
+if errors.As(err, &info) {
+	for frame := range stacktrace.CallersFrames(info.Callers) {
+		_, _ = frame.File, frame.Line
+	}
+}
+```
 
 ## Performance Considerations
 
 Adding stack traces to errors involves some overhead. In performance-critical
-sections, consider using traditional error handling and add stack traces at
+sections, consider using traditional error handling and adding stack traces at
 higher levels of your application.
