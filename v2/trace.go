@@ -43,8 +43,13 @@ func traceSkip(err error, skip int) error {
 }
 
 func withSkip(err error, skip int) error {
-	if other := new(StackTracer); errors.As(err, other) {
+	if hasStackTracer(err) {
 		return err
 	}
 	return newErrorSkip(err, skip+1)
+}
+
+func hasStackTracer(err error) bool {
+	var other StackTracer
+	return errors.As(err, &other)
 }
