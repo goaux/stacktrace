@@ -64,8 +64,9 @@ func TestErrorf(t *testing.T) {
 		if got := info.Detail; got != want {
 			t.Errorf("want=%q got=%q", want, got)
 		}
-		if n := len(info.StackEntries); n != 3 {
-			t.Errorf("len(info.StackEntries) = %d, must be 3", n)
+		if n := len(info.StackEntries); n != 4 {
+			t.Logf("\n%s", info.Format())
+			t.Errorf("len(info.StackEntries) = %d, must be 4", n)
 		}
 	})
 }

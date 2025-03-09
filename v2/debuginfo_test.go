@@ -1,6 +1,7 @@
 package stacktrace_test
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -85,4 +86,21 @@ func ExampleDebugInfo_Format_nil() {
 	err := stacktrace.Trace(nil)
 	fmt.Println(stacktrace.Format(err))
 	// Output:
+}
+
+func ExampleDebugInfo_multiple() {
+	ch := make(chan error)
+	go func() { ch <- stacktrace.New("hello") }()
+	go func() { ch <- stacktrace.New("world") }()
+	err1 := <-ch // error from the thread
+	err2 := <-ch // error from the other thread
+	if err1 != nil || err2 != nil {
+		err := errors.Join(
+			stacktrace.New("Two errors"), // error of this thread
+			err1,
+			err2,
+		)
+		info := stacktrace.GetDebugInfo(err)
+		fmt.Println(info.Format()) // this prints 3 stack frames.
+	}
 }

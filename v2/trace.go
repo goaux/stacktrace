@@ -43,14 +43,8 @@ func traceSkip(err error, skip int) error {
 }
 
 func withSkip(err error, skip int) error {
-	if _, ok := extract(err); ok {
+	if other := new(StackTracer); errors.As(err, other) {
 		return err
 	}
 	return newErrorSkip(err, skip+1)
-}
-
-func extract(err error) (StackTracer, bool) {
-	var target StackTracer
-	ok := errors.As(err, &target)
-	return target, ok
 }
