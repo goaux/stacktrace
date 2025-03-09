@@ -29,9 +29,10 @@ func GetDebugInfo(err error) DebugInfo {
 }
 
 func stackEntries(err error) []string {
-	if err := extract(err); err != nil {
-		entries := make([]string, 0, len(err.Callers))
-		walkCallersFrames(err.Callers, func(frame *runtime.Frame) {
+	if err, ok := extract(err); ok {
+		callers := err.StackTrace()
+		entries := make([]string, 0, len(callers))
+		walkCallersFrames(callers, func(frame *runtime.Frame) {
 			entries = append(entries, frameString(frame))
 		})
 		return entries
