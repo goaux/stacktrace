@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"slices"
 	"testing"
 
 	"github.com/goaux/stacktrace/v2"
@@ -32,7 +31,7 @@ func TestError(t *testing.T) {
 		if v, ok := err.(stacktrace.StackTracer); ok {
 			got := v.StackTrace()
 			want := []uintptr{1, 2, 3}
-			if !slices.Equal(got, want) {
+			if !equal(got, want) {
 				t.Errorf("got=%v want=%v", got, want)
 			}
 		}
