@@ -32,7 +32,7 @@ func GetDebugInfo(err error) DebugInfo {
 }
 
 func stackEntries(err error) []string {
-	list := listStackTracers(err)
+	list := ListStackTracers(err)
 	if len(list) == 0 {
 		return nil
 	}
@@ -50,7 +50,8 @@ func stackEntries(err error) []string {
 	return entries
 }
 
-func listStackTracers(err error) []StackTracer {
+// ListStackTracers returns all the StackTracers in the error chain.
+func ListStackTracers(err error) []StackTracer {
 	var list []StackTracer
 	walkErrorChain(err, func(err error) {
 		if v, ok := err.(StackTracer); ok {

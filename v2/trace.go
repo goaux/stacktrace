@@ -43,13 +43,15 @@ func traceSkip(err error, skip int) error {
 }
 
 func withSkip(err error, skip int) error {
-	if hasStackTracer(err) {
+	if HasStackTracer(err) {
 		return err
 	}
 	return newErrorSkip(err, skip+1)
 }
 
-func hasStackTracer(err error) bool {
+// HasStackTracer returns true if there is at least one StackTracer in the
+// error chain, false otherwise.
+func HasStackTracer(err error) bool {
 	var other StackTracer
 	return errors.As(err, &other)
 }
