@@ -2,9 +2,7 @@ package stacktrace
 
 import (
 	"fmt"
-	"path/filepath"
 	"runtime"
-	"strings"
 )
 
 // Error wraps an error and adds a call stack indicating where it occurred.
@@ -36,15 +34,6 @@ type Error struct {
 }
 
 var _ StackTracer = Error{}
-
-// StackTracer represents an error that provides stack trace information.
-type StackTracer interface {
-	// StackTracer extends the error interface.
-	error
-
-	// StackTrace returns a slice of program counters representing the call stack.
-	StackTrace() []uintptr
-}
 
 // NewError returns a new Error instance with the given error and caller stack
 // information.
@@ -84,42 +73,4 @@ func (err Error) Unwrap() error {
 // StackTrace returns a slice of program counters representing the call stack.
 func (err Error) StackTrace() []uintptr {
 	return err.Callers
-}
-
-func walkCallersFrames(pc []uintptr, fn func(*runtime.Frame)) {
-	frames := runtime.CallersFrames(pc)
-	for {
-		frame, more := frames.Next()
-		fn(&frame)
-		if !more || frame.Function == "main.main" {
-			break
-		}
-	}
-}
-
-func frameShortString(frame *runtime.Frame) string {
-	return fmt.Sprintf(
-		"%s:%d %s",
-		filepath.Base(frame.File),
-		frame.Line,
-		frameFunction(frame.Function),
-	)
-}
-
-func frameString(frame *runtime.Frame) string {
-	return fmt.Sprintf(
-		"%s:%d %s",
-		frame.File,
-		frame.Line,
-		frameFunction(frame.Function),
-	)
-}
-
-func frameFunction(s string) string {
-	if i := strings.LastIndexByte(s, '/'); i != -1 {
-		if j := strings.IndexByte(s[i+1:], '.'); i != -1 {
-			s = s[i+j+2:]
-		}
-	}
-	return s
 }

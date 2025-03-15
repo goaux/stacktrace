@@ -50,28 +50,13 @@ func stackEntries(err error) []string {
 	return entries
 }
 
-// ListStackTracers returns all the StackTracers in the error chain.
-func ListStackTracers(err error) []StackTracer {
-	var list []StackTracer
-	walkErrorChain(err, func(err error) {
-		if v, ok := err.(StackTracer); ok {
-			list = append(list, v)
-		}
-	})
-	return list
-}
-
-func walkErrorChain(err error, callback func(err error)) {
-	if err == nil {
-		return
-	}
-	callback(err)
-	switch err := err.(type) {
-	case interface{ Unwrap() error }:
-		walkErrorChain(err.Unwrap(), callback)
-	case interface{ Unwrap() []error }:
-		for _, err := range err.Unwrap() {
-			walkErrorChain(err, callback)
+func walkCallersFrames(pc []uintptr, fn func(*runtime.Frame)) {
+	frames := runtime.CallersFrames(pc)
+	for {
+		frame, more := frames.Next()
+		fn(&frame)
+		if !more || frame.Function == "main.main" {
+			break
 		}
 	}
 }
