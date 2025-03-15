@@ -99,19 +99,19 @@ For example, the info contains information like below:
 }
 ```
 
-### Other ways
+### As StackTracers
 
-Alternatively, you can use [errors.As][] to extract the [Error][] instance from an error chain.
+Alternatively, you can use [ListStackTracers][] to extract the [StackTracer][] instances from an error chain.
 [CallersFrames][] is available in Go 1.23 or later.
 
-[errors.As]: https://pkg.go.dev/errors#As
-[Error]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#Error
+[ListStackTracers]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#ListStackTracers
+[StackTracer]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#StackTracer
 [CallersFrames]: https://pkg.go.dev/github.com/goaux/stacktrace/v2#CallersFrames
 
 ```go
-var info *stacktrace.Error
-if errors.As(err, &info) {
-	for frame := range stacktrace.CallersFrames(info.Callers) {
+list := stacktrace.ListStackTracers(err)
+for _, v := range list {
+	for frame := range stacktrace.CallersFrames(v.StackTrace()) {
 		_, _ = frame.File, frame.Line
 	}
 }
