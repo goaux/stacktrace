@@ -36,6 +36,16 @@ func TestCallersFrames(t *testing.T) {
 	if !slices.Equal(list, want) {
 		t.Errorf("list must be equal to callers; list=%v callers=%v", list, callers)
 	}
+
+	t.Run("nil", func(t *testing.T) {
+		n := 0
+		for range stacktrace.CallersFrames(nil) {
+			n++
+		}
+		if n != 0 {
+			t.Errorf("n must be 0, but %d", n)
+		}
+	})
 }
 
 func funcnameOf(t *testing.T, pc uintptr) string {

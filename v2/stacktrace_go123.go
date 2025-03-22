@@ -15,6 +15,9 @@ import (
 // and provides each frame through the yield function.
 func CallersFrames(callers []uintptr) iter.Seq[*runtime.Frame] {
 	return func(yield func(*runtime.Frame) bool) {
+		if len(callers) == 0 {
+			return
+		}
 		frames := runtime.CallersFrames(callers)
 		for {
 			frame, more := frames.Next()
