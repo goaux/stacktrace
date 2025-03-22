@@ -38,6 +38,15 @@ func TestGetDebugInfo(t *testing.T) {
 			t.Errorf("len(info.StackEntries) must be 0")
 		}
 	})
+
+	t.Run("with no stack trace", func(t *testing.T) {
+		err := stacktrace.NewError(errors.New("testing"), nil)
+		got := stacktrace.GetDebugInfo(err).Format()
+		want := err.Error()
+		if got != want {
+			t.Errorf("got=%q want=%q", got, want)
+		}
+	})
 }
 
 func TestDebugInfo_Format(t *testing.T) {

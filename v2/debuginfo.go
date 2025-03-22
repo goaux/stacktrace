@@ -51,6 +51,9 @@ func stackEntries(err error) []string {
 }
 
 func walkCallersFrames(pc []uintptr, fn func(*runtime.Frame)) {
+	if len(pc) == 0 {
+		return
+	}
 	frames := runtime.CallersFrames(pc)
 	for {
 		frame, more := frames.Next()
