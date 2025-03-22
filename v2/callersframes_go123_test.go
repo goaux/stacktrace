@@ -56,12 +56,3 @@ func funcnameOf(t *testing.T, pc uintptr) string {
 	}
 	return f.Name()
 }
-
-func ExampleListStackTracers() {
-	var err error
-	for _, v := range stacktrace.ListStackTracers(err) {
-		for frame := range stacktrace.CallersFrames(v.StackTrace()) {
-			_, _ = frame.File, frame.Line
-		}
-	}
-}
